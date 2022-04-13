@@ -7,6 +7,53 @@ function pythagoras(x, y){
    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
+function changeXBounds(x, y, event){
+   switch(event.button){
+      case 0:     // Left
+         input_xUp.value = x.toString(10);
+         handleUpDoInput();
+         if(!event.shiftKey){
+            input_yUp.value = y.toString(10);
+            handleUpRaInput();
+         }
+         break;
+      case 1:     // Middle
+         if(x > 0){
+            input_xUp.value = x.toString(10);
+            input_xLo.value = '0';
+            handleUpDoInput();
+            handleLoDoInput();
+            if(!event.shiftKey){
+               input_yUp.value = y.toString(10);
+               input_yLo.value = '0';
+               handleUpRaInput();
+               handleLoRaInput();
+            }
+         }else{
+            input_xLo.value = x.toString(10);
+            input_xUp.value = '0';
+            handleUpDoInput();
+            handleLoDoInput();
+            if(!event.shiftKey){
+               input_yLo.value = y.toString(10);
+               input_yUp.value = '0';
+               handleUpRaInput();
+               handleLoRaInput();
+            }
+         }
+         break;
+      case 2:
+         input_xLo.value = x.toString(10);
+         handleLoDoInput();
+         if(!event.shiftKey){
+            input_yLo.value = y.toString(10);
+            handleLoRaInput();
+         }
+         break;
+   }
+   renderPreview();
+}
+
 function renderPreview(stepIndex = step){
    // if(prevs.width != (xUpperBound - xLowerBound) && prevs.height != (yUpperBound - yLowerBound)){
    //    prevs.width = (xUpperBound - xLowerBound) / 2;
@@ -40,34 +87,70 @@ function renderPreview(stepIndex = step){
    
    try{
       if(fIsSet){
+         pretx.strokeStyle = color_f.value;
+         pretx.fillStyle = color_f.value + '55';
          pretx.beginPath();
-         pretx.moveTo(xLowerBound * xScale, Number(nerdamer('f(' + xLowerBound + ')').text('decimal')) * yScale);
+         pretx.moveTo(xLowerBound * xScale, Number(nerdamer('f(' + xLowerBound + ')').evaluate().text('decimal')) * yScale);
+         let xIncomplete = true;
          for(let i = xLowerBound; i < xUpperBound; i += stepIndex){
-            let y = nerdamer('f(' + i + ')').text('decimal');
+            let y = nerdamer('f(' + i + ')').evaluate().text('decimal');
             if(y.substring(0,2) == '0-') y = y.substring(1);
             pretx.lineTo(i * xScale, Number(y) * yScale);
-            // console.log((i * xScale) + ', ' + (Number(nerdamer('f(' + i + ')').text('decimal')) * yScale));
+            if(i == xUpperBound) xIncomplete = false;
          }
-         pretx.closePath();
-         pretx.strokeStyle = color_f.value;
+         if(xIncomplete){
+            let y = nerdamer('f(' + xUpperBound + ')').evaluate().text('decimal');
+            if(y.substring(0,2) == '0-') y = y.substring(1);
+            pretx.lineTo(xUpperBound * xScale, Number(y) * yScale);
+         }
          pretx.stroke();
+         pretx.closePath();
       }
       if(gIsSet){
+         pretx.strokeStyle = color_g.value;
+         pretx.fillStyle = color_g.value + '55';
          pretx.beginPath();
-         pretx.moveTo(xLowerBound * xScale, Number(nerdamer('g(' + xLowerBound + ')').text('decimal')) * yScale);
+         pretx.moveTo(xLowerBound * xScale, Number(nerdamer('g(' + xLowerBound + ')').evaluate().text('decimal')) * yScale);
+         let xIncomplete = true;
          for(let j = xLowerBound; j < xUpperBound; j += stepIndex){
-            let y = nerdamer('g(' + j + ')').text('decimal');
+            let y = nerdamer('g(' + j + ')').evaluate().text('decimal');
             if(y.substring(0,2) == '0-') y = y.substring(1);
             pretx.lineTo(j * xScale, Number(y) * yScale);
-            // console.log(j + ', ' + Number(nerdamer('g(' + j + ')').text('decimal')));
+            if(j == xUpperBound) xIncomplete = false;
          }
-         pretx.closePath();
-         pretx.strokeStyle = color_g.value;
+         if(xIncomplete){
+            let y = nerdamer('g(' + xUpperBound + ')').evaluate().text('decimal');
+            if(y.substring(0,2) == '0-') y = y.substring(1);
+            pretx.lineTo(xUpperBound * xScale, Number(y) * yScale);
+         }
          pretx.stroke();
+         pretx.closePath();
       }
    }catch(err){
       errorLog.general.push(err);
       console.log(err);
+   }
+
+   xIsG.innerHTML = 'undefined';
+   if(fIsSet && gIsSet){
+      let fg = nerdamer('solve(f(x)=g(x),x)').text('decimal').split(/[\[\]]/g).join('').split(',');
+      for(let i = 0; i < fg.length; i++){
+         if(fg[i].substring(0,2) == '0-') fg[i] = fg[i].substring(1);
+         fg[i] = Number(fg[i]);
+      }
+      fg = JSON.stringify(fg).split(/[\[\]]/g).join('').split(',');
+      for(let i = 0; i < fg.length; i++){
+         let y = nerdamer('f(' + fg[i] + ')').evaluate().text('decimal');
+         if(y.substring(0,2) == '0-') y = y.substring(1);
+         let dispFG = Number(fg[i]);
+         if(fg[i].toString(10).length >= 6) dispFG = dispFG.toFixed(4) + '...';
+         let dispY = Number(y).toString(10);
+         if(dispY.length >= 6) dispY = Number(y).toFixed(4) + '...';
+         let title='(' + dispFG + ', ' + dispY + ')';
+         fg[i] = '<u style="color: skyblue" oncontextmenu="return false" data-x-value="' + fg[i] + '" onmousedown="(function a(event){changeXBounds(' + fg[i] + ',' + Number(y).toString(10) + ',event);})(event)" title="' + title + '">' + dispFG + '</u>';
+      }
+      fg = [... new Set(fg)].join(', ');
+      xIsG.innerHTML = fg;
    }
 
    pretx.setTransform(1, 0, 0, 1, 0, 0);
@@ -102,40 +185,85 @@ function renderPreview(stepIndex = step){
 renderPreview(step * 100);
 window.setTimeout(renderPreview, 1);
 
+var _prev = {
+   f: input_f.value,
+   g: input_g.value,
+   s: input_s.value,
+   yLo: input_yLo.value,
+   yUp: input_yUp.value,
+   xLo: input_xLo.value,
+   xUp: input_xUp.value,
+};
+
 input_f.addEventListener('keyup', e => {
-   renderPreview(step * 10);
+   renderPreview((xUpperBound - xLowerBound) / 100);
    // renderPreview();
 });
-input_f.addEventListener('blur', e => renderPreview());
+input_f.addEventListener('blur', e => {
+   if(_prev.f != input_f.value){
+      renderPreview();
+   }
+   _prev.f = input_f.value;
+});
 
 input_g.addEventListener('keyup', e => {
-   renderPreview(step * 10);
+   renderPreview((xUpperBound - xLowerBound) / 100);
    // renderPreview();
 });
-input_g.addEventListener('blur', e => renderPreview());
+input_g.addEventListener('blur', e => {
+   if(_prev.g != input_g.value){
+      renderPreview();
+   }
+   _prev.g = input_g.value;
+});
 
-input_s.addEventListener('blur', e => renderPreview());
+input_s.addEventListener('blur', e => {
+   if(_prev.s != input_s.value){
+      renderPreview();
+   }
+   _prev.s = input_s.value;
+});
 
 input_yLo.addEventListener('keyup', e => {
-   renderPreview(step * 10);
+   renderPreview((xUpperBound - xLowerBound) / 100);
    // renderPreview();
 });
-input_yLo.addEventListener('blur', e => renderPreview());
+input_yLo.addEventListener('blur', e => {
+   if(_prev.yLo != input_yLo.value){
+      renderPreview();
+   }
+   _prev.yLo = input_yLo.value;
+});
 
 input_yUp.addEventListener('keyup', e => {
-   renderPreview(step * 10);
+   renderPreview((xUpperBound - xLowerBound) / 100);
    // renderPreview();
 });
-input_yUp.addEventListener('blur', e => renderPreview());
+input_yUp.addEventListener('blur', e => {
+   if(_prev.yUp != input_yUp.value){
+      renderPreview();
+   }
+   _prev.yUp = input_yUp.value;
+});
 
 input_xLo.addEventListener('keyup', e => {
-   renderPreview(step * 10);
+   renderPreview((xUpperBound - xLowerBound) / 100);
    // renderPreview();
 });
-input_xLo.addEventListener('blur', e => renderPreview());
+input_xLo.addEventListener('blur', e => {
+   if(_prev.xLo != input_xLo.value){
+      renderPreview();
+   }
+   _prev.xLo = input_xLo.value;
+});
 
 input_xUp.addEventListener('keyup', e => {
-   renderPreview(step * 10);
+   renderPreview((xUpperBound - xLowerBound) / 100);
    // renderPreview();
 });
-input_xUp.addEventListener('blur', e => renderPreview());
+input_xUp.addEventListener('blur', e => {
+   if(_prev.xUp != input_xUp.value){
+      renderPreview();
+   }
+   _prev.xUp = input_xUp.value;
+});

@@ -8,6 +8,8 @@ const input_yUp = document.querySelector('#range-upper');
 const input_xLo = document.querySelector('#domain-lower');
 const input_xUp = document.querySelector('#domain-upper');
 
+const xIsG = document.querySelector('#f-equals-g');
+
 const _mCvs = document.createElement('canvas');
 const _mCtx = _mCvs.getContext('2d');
 const _mFont = window.getComputedStyle(input_f);
