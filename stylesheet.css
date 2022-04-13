@@ -52,7 +52,7 @@ body{
    background-color: rgba(180,180,180,0.33);
 }
 .definition-input:focus{
-   border: none;
+   /* border: none; */
    background-color: rgba(200,200,200,0.4);
 }
 
@@ -98,6 +98,12 @@ body{
 }
 .color-input::-webkit-color-swatch {
 	border: none;
+}
+
+.f-equals-hint{
+   font-size: 0.7em;
+   font-weight: normal;
+   vertical-align: middle;
 }
 
 canvas{
