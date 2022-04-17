@@ -1,6 +1,17 @@
 const prevs = document.querySelector('#preview-2d');
 const pretx = prevs.getContext('2d');
 
+var points = {
+   f: {
+      x: [],
+      y: [],
+   },
+   g: {
+      x: [],
+      y: [],
+   },
+};
+
 pretx.fillRect(0,0,50,50);
 
 function pythagoras(x, y){
@@ -54,14 +65,27 @@ function changeXBounds(x, y, event){
    renderPreview();
 }
 
-function renderPreview(stepIndex = step){
-   // if(prevs.width != (xUpperBound - xLowerBound) && prevs.height != (yUpperBound - yLowerBound)){
-   //    prevs.width = (xUpperBound - xLowerBound) / 2;
-   //    prevs.height = (yUpperBound - yLowerBound) / 2;
-   // }
+async function calculatePreviewPoints(stepIndex){
+   points = {f: {x: [], y: []}, g: {x: [], y: []}};
+
+
+}
+
+async function renderPreview(stepIndex = step){
+
+   let hidingCurtain = false;
+   if(stepIndex == step){
+      await showCalcCurtain();
+      hidingCurtain = true;
+   }
+   // await showCalcCurtain();
+
+   await pause(1);
+   // For some reason without this line in this exact spot
+   // the script shows curtain -> hides curtain -> renders
+   
+   // Get scaling of canvas
    pretx.clearRect(0,0,prevs.width,prevs.height);
-   // pretx.translate(prevs.width / 2, prevs.height / 2);
-   // pretx.setTransform(1, 0, 0, -1, prevs.width / 2, prevs.height / 2);
    let xScale = (prevs.width - 2) / (xUpperBound - xLowerBound);
    let xShift = -1 * xScale * xLowerBound;
    let yScale = -1 * (prevs.height - 2) / (yUpperBound - yLowerBound);
@@ -85,6 +109,7 @@ function renderPreview(stepIndex = step){
 
    pretx.lineWidth = 1;
    
+   // Draw f(x) and g(x) previews
    try{
       if(fIsSet){
          pretx.strokeStyle = color_f.value;
@@ -133,7 +158,8 @@ function renderPreview(stepIndex = step){
 
    xIsG.innerHTML = 'undefined';
    if(fIsSet && gIsSet){
-      let fg = nerdamer('solve(f(x)=g(x),x)').text('decimal').split(/[\[\]]/g).join('').split(',');
+      let fg = nerdamer('solve(f(x)=g(x),x)').evaluate().text('decimal').split(/[\[\]]/g).join('').split(',');
+      // console.log(fg);
       for(let i = 0; i < fg.length; i++){
          if(fg[i].substring(0,2) == '0-') fg[i] = fg[i].substring(1);
          fg[i] = Number(fg[i]);
@@ -178,6 +204,12 @@ function renderPreview(stepIndex = step){
       pretx.stroke();
    }
 
+   if(hidingCurtain == true) await hideCalcCurtain();
+   // await hideCalcCurtain();
+
+   // In case something needs to await this
+   return new Promise(resolve => resolve('Rendered preview'));
+   
    // window.requestAnimationFrame(renderPreview);
 }
 
