@@ -33,10 +33,10 @@ var dummy_s = null;
 
 // Add changing support for these
 var step = 0.1;
-var xLowerBound = -250;
-var xUpperBound = 250;
-var yLowerBound = -250;
-var yUpperBound = 250;
+var xLowerBound = -1;
+var xUpperBound = 1;
+var yLowerBound = -1;
+var yUpperBound = 1;
 
 function sizingFunctionInputF(e){
    input_f.style.width = measureStr(input_f.value + 'M') + 'px';
