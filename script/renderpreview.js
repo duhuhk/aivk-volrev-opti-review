@@ -158,7 +158,8 @@ async function renderPreview(stepIndex = step){
 
    xIsG.innerHTML = 'undefined';
    if(fIsSet && gIsSet){
-      let fg = nerdamer('solve(f(x)=g(x),x)').text('decimal').split(/[\[\]]/g).join('').split(',');
+      let fg = nerdamer('solve(f(x)=g(x),x)').evaluate().text('decimal').split(/[\[\]]/g).join('').split(',');
+      // console.log(fg);
       for(let i = 0; i < fg.length; i++){
          if(fg[i].substring(0,2) == '0-') fg[i] = fg[i].substring(1);
          fg[i] = Number(fg[i]);

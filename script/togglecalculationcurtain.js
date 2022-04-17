@@ -2,13 +2,13 @@ const curtain = document.querySelector('#calculation-curtain');
 
 async function hideCalcCurtain(){
    curtain.style.visibility = 'hidden';
-   console.log('hide');
+   // console.log('hide');
    return new Promise(resolve => resolve('Hid calculation curtain'));
 }
 
 async function showCalcCurtain(){
    curtain.style.visibility = 'visible';
-   console.log('show');
+   // console.log('show');
    return new Promise(resolve => resolve('Showed calculation curtain'));
 }
 
