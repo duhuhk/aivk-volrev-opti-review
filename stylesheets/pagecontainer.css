@@ -1,0 +1,17 @@
+#page-container{
+   position: absolute;
+   margin: 0;
+   top: 0;
+   left: 33%;
+   
+   font-size: 1.4em;
+   
+   /* width: 60%;
+   height: ; */
+   padding: 0;
+   border: 2px solid white;
+   box-sizing: border-box;
+   border-radius: 0.25em;
+   background-color: rgba(30,30,30,0.33);
+   color: white;
+}

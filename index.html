@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Volumes of Revolution & Optimization Review</title>
+   <link rel='stylesheet' href='./stylesheets/root.css'>
+   <link rel='stylesheet' href='./stylesheets/navigator.css'>
+   <link rel='stylesheet' href='./stylesheets/pagecontainer.css'>
+</head>
+<body>
+   <div id="main-navigator">
+      <h2 id="navi-label">NAVIGATION</h2>
+      <!-- <button id="to-home" class="navigator-button">Home</button>                  <br /> -->
+      <!-- button id="to-review" class="navigator-button">Review Sheet</button>         <br / -->
+      <span id="rev-label" class="sub-label">Review Sheets</span>                    <br />
+      <div id="rev-navigator" class="sub-menu">
+         <button id="to-rev-op" class="navigator-button">Optimization</button>      <br />
+         <button id="to-rev-vo" class="navigator-button">Revolution</button>        <br />
+      </div>
+      <span id="mc-label" class="sub-label">Multiple Choice</span>                  <br />
+      <div id="mc-navigator" class="sub-menu">
+         <button id="to-mc-q" class="navigator-button">Questions</button>           <br />
+         <button id="to-mc-a" class="navigator-button">Answers</button>             <br />
+      </div>
+      <span id="frq-label" class="sub-label">Free Response</span>                  <br />
+      <div id="frq-navigator" class="sub-menu">
+         <button id="to-frq" class="navigator-button">Free Response</button>           <br />
+      </div>
+      <!-- frq stuff in video format -->
+      <span id="prev-label" class="sub-label">See It Happen</span>                  <br />
+      <div id="prev-navigator" class="sub-menu">
+         <!-- button id="to-prev-op" class="navigator-button">Optimization</button>     <br / -->
+         <button id="to-prev-vo" class="navigator-button">Revolution</button>       <br />
+      </div>
+   </div>
+   
+   <div id="page-container">
+      <!-- embed id="preview-parameters" type="text/html" src="./volumesofrevolution/index.html" -->
+      <embed id="embed-body" type="text/html" src="./landing.html">
+   </div>
+   
+   <script id="page-switch">
+      const naviContainer = document.querySelector('#main-navigator');
+      const pageContainer = document.querySelector('#page-container');
+      // const previewElement = document.querySelector('#preview-parameters');
+      const embedBody = document.querySelector('#embed-body');
+      // previewElement.style.display = 'none';
+      // TODO move this to the css
+      
+      const mainNaviStyle = window.getComputedStyle(naviContainer);
+      
+      let __em = Number(mainNaviStyle.fontSize.split('px')[0]);
+      
+      // Size the main body
+      function sizeStuff(){
+         pageContainer.style.left = (Number(mainNaviStyle.width.split('px')[0]) + (0.8 * __em)) + 'px';
+         pageContainer.style.width = (window.innerWidth - (Number(mainNaviStyle.width.split('px')[0]) + (1.6 * __em))) + 'px';
+         pageContainer.style.top = (0.8 * __em) + 'px';
+         pageContainer.style.height = (window.innerHeight - (1.6 * __em)) + 'px';
+         
+         embedBody.width = (window.innerWidth - (Number(mainNaviStyle.width.split('px')[0]) + (1.85 * __em))) + 'px';
+         embedBody.height = (window.innerHeight - (1.85 * __em)) + 'px';
+      }
+      window.addEventListener('resize', sizeStuff);
+      sizeStuff();
+      
+      const pageContStyle = window.getComputedStyle(pageContainer);
+      
+      document.getElementById('to-rev-op').addEventListener('click', e => embedBody.src = './reviewsheets/optimization.html');
+      document.getElementById('to-rev-vo').addEventListener('click', e => embedBody.src = './reviewsheets/volume.html');
+      document.getElementById('to-mc-q').addEventListener('click', e => embedBody.src = './multiplechoice/problems.html');
+      document.getElementById('to-mc-a').addEventListener('click', e => embedBody.src = './multiplechoice/solutions.html');
+      document.getElementById('to-frq').addEventListener('click', e => embedBody.src = './freeresponse/frqvideo.mp4');
+      document.getElementById('to-prev-vo').addEventListener('click', e => embedBody.src = './volumesofrevolution/index.html');
+   </script>
+</body>
+</html>
