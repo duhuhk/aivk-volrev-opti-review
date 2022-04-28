@@ -182,6 +182,7 @@ async function renderPreview(stepIndex = step){
          xIsG.innerHTML = fg;
       }
    }catch(e){
+      xIsG.innerHTML = '<span style="text-shadow: 0 0 5px red;">[ <i>f</i> never equals <i>g</i> ]</span>';
       console.log(e);
       //alert(e);
    }
