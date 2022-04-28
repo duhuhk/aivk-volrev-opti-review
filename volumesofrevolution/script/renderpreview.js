@@ -158,27 +158,32 @@ async function renderPreview(stepIndex = step){
       console.log(err);
    }
 
-   xIsG.innerHTML = 'undefined';
-   if(fIsSet && gIsSet){
-      let fg = nerdamer('solve(f(x)=g(x),x)').evaluate().text('decimal').split(/[\[\]]/g).join('').split(',');
-      // console.log(fg);
-      for(let i = 0; i < fg.length; i++){
-         if(fg[i].substring(0,2) == '0-') fg[i] = fg[i].substring(1);
-         fg[i] = Number(fg[i]);
+   try{
+      xIsG.innerHTML = 'undefined';
+      if(fIsSet && gIsSet){
+         let fg = nerdamer('solve(f(x)=g(x),x)').evaluate().text('decimal').split(/[\[\]]/g).join('').split(',');
+         // console.log(fg);
+         for(let i = 0; i < fg.length; i++){
+            if(fg[i].substring(0,2) == '0-') fg[i] = fg[i].substring(1);
+            fg[i] = Number(fg[i]);
+         }
+         fg = JSON.stringify(fg).split(/[\[\]]/g).join('').split(',');
+         for(let i = 0; i < fg.length; i++){
+            let y = nerdamer('f(' + fg[i] + ')').evaluate().text('decimal');
+            if(y.substring(0,2) == '0-') y = y.substring(1);
+            let dispFG = Number(fg[i]);
+            if(fg[i].toString(10).length >= 6) dispFG = dispFG.toFixed(4) + '...';
+            let dispY = Number(y).toString(10);
+            if(dispY.length >= 6) dispY = Number(y).toFixed(4) + '...';
+            let title='(' + dispFG + ', ' + dispY + ')';
+            fg[i] = '<u style="color: skyblue" oncontextmenu="return false" data-x-value="' + fg[i] + '" onmousedown="(function a(event){changeXBounds(' + fg[i] + ',' + Number(y).toString(10) + ',event);})(event)" title="' + title + '">' + dispFG + '</u>';
+         }
+         fg = [... new Set(fg)].join(', ');
+         xIsG.innerHTML = fg;
       }
-      fg = JSON.stringify(fg).split(/[\[\]]/g).join('').split(',');
-      for(let i = 0; i < fg.length; i++){
-         let y = nerdamer('f(' + fg[i] + ')').evaluate().text('decimal');
-         if(y.substring(0,2) == '0-') y = y.substring(1);
-         let dispFG = Number(fg[i]);
-         if(fg[i].toString(10).length >= 6) dispFG = dispFG.toFixed(4) + '...';
-         let dispY = Number(y).toString(10);
-         if(dispY.length >= 6) dispY = Number(y).toFixed(4) + '...';
-         let title='(' + dispFG + ', ' + dispY + ')';
-         fg[i] = '<u style="color: skyblue" oncontextmenu="return false" data-x-value="' + fg[i] + '" onmousedown="(function a(event){changeXBounds(' + fg[i] + ',' + Number(y).toString(10) + ',event);})(event)" title="' + title + '">' + dispFG + '</u>';
-      }
-      fg = [... new Set(fg)].join(', ');
-      xIsG.innerHTML = fg;
+   }catch(e){
+      console.log(e);
+      //alert(e);
    }
 
    pretx.setTransform(1, 0, 0, 1, 0, 0);
