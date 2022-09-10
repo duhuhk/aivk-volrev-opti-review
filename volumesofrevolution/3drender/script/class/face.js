@@ -14,7 +14,32 @@ class Face{
       // sources = [{color: ~~~, position: [~~~], ...]
       
    }
-   render(shade){      
+   render(shade){ if(shade == null) shade = 0;
+      let ind = this.c.faces.indexOf(this);
+      
+      this.vtx.forEach(v => v.posit());
+                 
+      if(this.renderBias < 0 || this.renderBias == NaN) return false;
+      
+      ctx.beginPath();
+      let vtx0 = this.vtx[0];
+      ctx.moveTo(vtx0.x * vtx0.d, vtx0.y * vtx0.d);
+      this.vtx.forEach(v => {
+         ctx.lineTo(v.x * v.d, v.y * v.d);
+         v.lockPosit = false;
+      });
+      ctx.closePath();
+      ctx.lineWidth = 0.05
+      ctx.fillStyle = this.color;
+      ctx.strokeStyle = this.color;
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(0,0,0,' + ((2.5 * shade ** 2) + (0.005 * (D / this.renderBias))) + ')'
+      ctx.strokeStyle = 'rgba(0,0,0,' + ((5 * shade ** 2) + (0.005 * (D / this.renderBias))) + ')';
+      ctx.fill();
+      ctx.stroke();
+   }
+   legacyRender(shade){      
       if(shade == null) shade = 0;
       // ctx.clearRect(-0.5 * cvs.width, -0.5 * cvs.height, cvs.width, cvs.height);
       let ind = this.c.faces.indexOf(this);
